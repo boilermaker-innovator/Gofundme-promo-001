@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import { AlertCircle, Heart } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const GoFundMeTeaserCreator = () => {
   const [formData, setFormData] = useState({
@@ -9,22 +6,13 @@ const GoFundMeTeaserCreator = () => {
     organizer: '',
     location: '',
     imageUrl: '',
-    tab1Title: 'Story',
-    tab1Content: '',
-    tab2Title: 'Updates',
-    tab2Content: '',
-    tab3Title: 'Comments',
-    tab3Content: '',
-    tab4Title: 'Donations',
-    tab4Content: '',
-    goalAmount: '',
-    raisedAmount: '',
+    story: '',
+    goal: '',
+    raised: '',
     campaignUrl: ''
   });
-
-  const [activeTab, setActiveTab] = useState(0);
+  
   const [showPreview, setShowPreview] = useState(false);
-  const [showInfoNote, setShowInfoNote] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -42,16 +30,9 @@ const GoFundMeTeaserCreator = () => {
       organizer: "John Smith",
       location: "Perth, WA",
       imageUrl: "/api/placeholder/400/300",
-      tab1Title: "Story",
-      tab1Content: "Sarah, a loving mother of two, was recently diagnosed with stage 3 breast cancer. The medical bills are mounting, and we're reaching out to our community for support. Every donation, no matter how small, will help Sarah focus on her recovery instead of financial stress.",
-      tab2Title: "Updates",
-      tab2Content: "Update (1 day ago): Thank you everyone for your incredible support! We've reached 60% of our goal.\n\nUpdate (1 week ago): Sarah started her first round of chemotherapy. She's staying strong!",
-      tab3Title: "Comments",
-      tab3Content: "Mary D: Staying strong, Sarah! We're all here for you ❤️\n\nJames K: Sending love and prayers 🙏\n\nEmma S: You've got this! 💪",
-      tab4Title: "Donations",
-      tab4Content: "Recent Donors:\n- Anonymous: $500\n- The Wilson Family: $250\n- Perth Community Group: $1,000\n- Sarah's Workplace: $2,000",
-      goalAmount: "50000",
-      raisedAmount: "30000",
+      story: "Sarah, a loving mother of two, was recently diagnosed with stage 3 breast cancer. The medical bills are mounting, and we're reaching out to our community for support. Every donation, no matter how small, will help Sarah focus on her recovery instead of financial stress.",
+      goal: "50000",
+      raised: "30000",
       campaignUrl: "https://gofundme.com/example"
     });
   };
@@ -62,16 +43,9 @@ const GoFundMeTeaserCreator = () => {
       organizer: '',
       location: '',
       imageUrl: '',
-      tab1Title: 'Story',
-      tab1Content: '',
-      tab2Title: 'Updates',
-      tab2Content: '',
-      tab3Title: 'Comments',
-      tab3Content: '',
-      tab4Title: 'Donations',
-      tab4Content: '',
-      goalAmount: '',
-      raisedAmount: '',
+      story: '',
+      goal: '',
+      raised: '',
       campaignUrl: ''
     });
     setShowPreview(false);
@@ -85,243 +59,186 @@ const GoFundMeTeaserCreator = () => {
   };
 
   const calculateProgress = () => {
-    return (parseFloat(formData.raisedAmount) / parseFloat(formData.goalAmount)) * 100;
-  };
-
-  const PreviewCard = () => {
-    const tabs = [
-      { title: formData.tab1Title, content: formData.tab1Content },
-      { title: formData.tab2Title, content: formData.tab2Content },
-      { title: formData.tab3Title, content: formData.tab3Content },
-      { title: formData.tab4Title, content: formData.tab4Content }
-    ];
-
-    const progress = calculateProgress();
-
-    return (
-      <Card className="w-full max-w-xl mx-auto mt-8">
-        <div className="relative">
-          <img 
-            src={formData.imageUrl} 
-            alt={formData.campaignTitle}
-            className="w-full h-48 object-cover"
-          />
-          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4 text-white">
-            <h2 className="text-2xl font-bold">{formData.campaignTitle}</h2>
-            <div className="text-sm">
-              {formData.organizer} • {formData.location}
-            </div>
-          </div>
-        </div>
-
-        <div className="p-4 bg-gray-50 border-b">
-          <div className="flex justify-between mb-2">
-            <span className="font-bold">{formatCurrency(formData.raisedAmount)}</span>
-            <span className="text-gray-600">raised of {formatCurrency(formData.goalAmount)} goal</span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div 
-              className="bg-green-600 rounded-full h-2" 
-              style={{ width: `${Math.min(progress, 100)}%` }}
-            ></div>
-          </div>
-        </div>
-
-        <div className="flex border-b">
-          {tabs.map((tab, index) => (
-            <button
-              key={index}
-              className={`flex-1 px-4 py-2 text-green-600 ${activeTab === index ? 'bg-white font-bold border-b-2 border-green-600' : 'bg-gray-50'}`}
-              onClick={() => setActiveTab(index)}
-            >
-              {tab.title}
-            </button>
-          ))}
-        </div>
-
-        <div className="p-4">
-          {tabs.map((tab, index) => (
-            <div key={index} className={activeTab === index ? 'block' : 'hidden'}>
-              {tab.content.split('\n').map((line, i) => (
-                <p key={i} className="mb-2">{line}</p>
-              ))}
-            </div>
-          ))}
-        </div>
-
-        <a
-          href={formData.campaignUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="block w-full bg-green-600 text-white text-center py-3 font-bold hover:bg-green-700"
-        >
-          <Heart className="inline-block mr-2 h-5 w-5" />
-          Donate Now
-        </a>
-      </Card>
-    );
+    return (parseFloat(formData.raised) / parseFloat(formData.goal)) * 100;
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-4xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">GoFundMe Campaign Teaser Creator</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-gray-50 p-6 rounded-lg">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block font-bold mb-2">Campaign Title:</label>
-            <input
-              type="text"
-              name="campaignTitle"
-              value={formData.campaignTitle}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              required
-            />
-          </div>
-          <div>
-            <label className="block font-bold mb-2">Organizer Name:</label>
-            <input
-              type="text"
-              name="organizer"
-              value={formData.organizer}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              required
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block font-bold mb-2">Location:</label>
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              required
-            />
-          </div>
-          <div>
-            <div className="flex items-center justify-between">
-              <label className="block font-bold mb-2">Campaign Image URL:</label>
-              <button
-                type="button"
-                onClick={() => setShowInfoNote(!showInfoNote)}
-                className="text-green-600 hover:text-green-700"
-              >
-                <AlertCircle className="w-5 h-5" />
-              </button>
-            </div>
-            <input
-              type="url"
-              name="imageUrl"
-              value={formData.imageUrl}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              required
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block font-bold mb-2">Goal Amount ($):</label>
-            <input
-              type="number"
-              name="goalAmount"
-              value={formData.goalAmount}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              required
-            />
-          </div>
-          <div>
-            <label className="block font-bold mb-2">Raised Amount ($):</label>
-            <input
-              type="number"
-              name="raisedAmount"
-              value={formData.raisedAmount}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              required
-            />
-          </div>
-        </div>
-
-        {showInfoNote && (
-          <Alert>
-            <AlertDescription>
-              Need to host your campaign image? Upload it to <a href="https://imgbb.com" target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">imgbb.com</a> and use the "Direct Link" provided.
-            </AlertDescription>
-          </Alert>
-        )}
-
-        {[1, 2, 3, 4].map(num => (
-          <div key={num} className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Form Section */}
+        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
+          <div className="space-y-4">
             <div>
-              <label className="block font-bold mb-2">Tab {num} Title:</label>
+              <label className="block font-bold mb-2">Campaign Title</label>
               <input
                 type="text"
-                name={`tab${num}Title`}
-                value={formData[`tab${num}Title`]}
+                name="campaignTitle"
+                value={formData.campaignTitle}
                 onChange={handleChange}
                 className="w-full p-2 border rounded"
                 required
               />
             </div>
+
             <div>
-              <label className="block font-bold mb-2">Tab {num} Content:</label>
-              <textarea
-                name={`tab${num}Content`}
-                value={formData[`tab${num}Content`]}
+              <label className="block font-bold mb-2">Organizer Name</label>
+              <input
+                type="text"
+                name="organizer"
+                value={formData.organizer}
                 onChange={handleChange}
-                className="w-full p-2 border rounded h-24"
+                className="w-full p-2 border rounded"
                 required
               />
             </div>
+
+            <div>
+              <label className="block font-bold mb-2">Location</label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block font-bold mb-2">Campaign Image URL</label>
+              <input
+                type="url"
+                name="imageUrl"
+                value={formData.imageUrl}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block font-bold mb-2">Campaign Story</label>
+              <textarea
+                name="story"
+                value={formData.story}
+                onChange={handleChange}
+                className="w-full p-2 border rounded h-32"
+                required
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block font-bold mb-2">Goal Amount ($)</label>
+                <input
+                  type="number"
+                  name="goal"
+                  value={formData.goal}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block font-bold mb-2">Raised Amount ($)</label>
+                <input
+                  type="number"
+                  name="raised"
+                  value={formData.raised}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block font-bold mb-2">Campaign URL</label>
+              <input
+                type="url"
+                name="campaignUrl"
+                value={formData.campaignUrl}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+                required
+              />
+            </div>
+
+            <div className="flex gap-2">
+              <button
+                type="submit"
+                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+              >
+                Preview
+              </button>
+              <button
+                type="button"
+                onClick={fillTestData}
+                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Fill Test Data
+              </button>
+              <button
+                type="button"
+                onClick={clearForm}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Clear
+              </button>
+            </div>
           </div>
-        ))}
+        </form>
 
-        <div>
-          <label className="block font-bold mb-2">Campaign URL:</label>
-          <input
-            type="url"
-            name="campaignUrl"
-            value={formData.campaignUrl}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
+        {/* Preview Section */}
+        {showPreview && (
+          <div className="bg-white rounded-lg shadow overflow-hidden">
+            <div className="relative">
+              <img 
+                src={formData.imageUrl} 
+                alt={formData.campaignTitle}
+                className="w-full h-48 object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-4 text-white">
+                <h2 className="text-xl font-bold">{formData.campaignTitle}</h2>
+                <p className="text-sm">
+                  {formData.organizer} • {formData.location}
+                </p>
+              </div>
+            </div>
 
-        <div className="flex justify-between gap-4">
-          <button
-            type="submit"
-            className="px-6 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-          >
-            Create Teaser
-          </button>
-          <button
-            type="button"
-            onClick={fillTestData}
-            className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Fill Test Data
-          </button>
-          <button
-            type="button"
-            onClick={clearForm}
-            className="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-          >
-            Clear Form
-          </button>
-        </div>
-      </form>
+            <div className="p-4">
+              <div className="mb-4">
+                <div className="flex justify-between mb-2">
+                  <span className="font-bold">{formatCurrency(formData.raised)}</span>
+                  <span className="text-gray-600">raised of {formatCurrency(formData.goal)} goal</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-green-600 rounded-full h-2" 
+                    style={{ width: `${Math.min(calculateProgress(), 100)}%` }}
+                  ></div>
+                </div>
+              </div>
 
-      {showPreview && <PreviewCard />}
+              <div className="mb-4">
+                <h3 className="font-bold mb-2">Campaign Story</h3>
+                <p className="text-gray-700">{formData.story}</p>
+              </div>
+
+              <a
+                href={formData.campaignUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full bg-green-600 text-white text-center py-3 font-bold hover:bg-green-700 rounded"
+              >
+                Donate Now
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
