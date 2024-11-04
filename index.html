@@ -1,246 +1,289 @@
-import React, { useState } from 'react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Teaser Builder</title>
+    <style>
+        body {
+            font-family: -apple-system, system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f2f5;
+        }
 
-const GoFundMeTeaserCreator = () => {
-  const [formData, setFormData] = useState({
-    campaignTitle: '',
-    organizer: '',
-    location: '',
-    imageUrl: '',
-    story: '',
-    goal: '',
-    raised: '',
-    campaignUrl: ''
-  });
-  
-  const [showPreview, setShowPreview] = useState(false);
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+        .section {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setShowPreview(true);
-  };
+        h2 {
+            color: #1a73e8;
+            margin: 0 0 15px 0;
+        }
 
-  const fillTestData = () => {
-    setFormData({
-      campaignTitle: "Help Sarah Beat Cancer",
-      organizer: "John Smith",
-      location: "Perth, WA",
-      imageUrl: "/api/placeholder/400/300",
-      story: "Sarah, a loving mother of two, was recently diagnosed with stage 3 breast cancer. The medical bills are mounting, and we're reaching out to our community for support. Every donation, no matter how small, will help Sarah focus on her recovery instead of financial stress.",
-      goal: "50000",
-      raised: "30000",
-      campaignUrl: "https://gofundme.com/example"
-    });
-  };
+        .input-group {
+            margin-bottom: 15px;
+        }
 
-  const clearForm = () => {
-    setFormData({
-      campaignTitle: '',
-      organizer: '',
-      location: '',
-      imageUrl: '',
-      story: '',
-      goal: '',
-      raised: '',
-      campaignUrl: ''
-    });
-    setShowPreview(false);
-  };
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-AU', {
-      style: 'currency',
-      currency: 'AUD'
-    }).format(amount);
-  };
+        input[type="text"],
+        input[type="url"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
 
-  const calculateProgress = () => {
-    return (parseFloat(formData.raised) / parseFloat(formData.goal)) * 100;
-  };
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
 
-  return (
-    <div className="max-w-4xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">GoFundMe Campaign Teaser Creator</h1>
+        .checkbox-group {
+            margin: 10px 0;
+        }
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Form Section */}
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow">
-          <div className="space-y-4">
-            <div>
-              <label className="block font-bold mb-2">Campaign Title</label>
-              <input
-                type="text"
-                name="campaignTitle"
-                value={formData.campaignTitle}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-                required
-              />
+        .tab-content {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .primary-button {
+            background: #1a73e8;
+            color: white;
+        }
+
+        .secondary-button {
+            background: #f8f9fa;
+            color: #1a73e8;
+            border: 1px solid #1a73e8;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .current-logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid #1a73e8;
+        }
+
+        #previewArea {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Campaign Teaser Builder</h1>
+        
+        <form id="teaserForm">
+            <!-- Header Section -->
+            <div class="section">
+                <h2>Header Information</h2>
+                <img src="https://i.ibb.co/N32GVgH/IMG-1693.jpg" alt="Current Logo" class="current-logo" id="logoPreview">
+                <div class="input-group">
+                    <label for="headerImage">Profile Image URL:</label>
+                    <input type="url" id="headerImage" name="headerImage" required>
+                </div>
+                <div class="input-group">
+                    <label for="campaignTitle">Campaign Title:</label>
+                    <input type="text" id="campaignTitle" name="campaignTitle" required>
+                </div>
+                <div class="input-group">
+                    <label for="organizerName">Organizer Name:</label>
+                    <input type="text" id="organizerName" name="organizerName" required>
+                </div>
+                <div class="input-group">
+                    <label for="location">Location:</label>
+                    <input type="text" id="location" name="location" required>
+                </div>
             </div>
 
-            <div>
-              <label className="block font-bold mb-2">Organizer Name</label>
-              <input
-                type="text"
-                name="organizer"
-                value={formData.organizer}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-                required
-              />
+            <!-- Story Tab -->
+            <div class="section">
+                <h2>Story Tab</h2>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="storyImageEnabled" checked>
+                    <label for="storyImageEnabled">Include image in Story tab</label>
+                </div>
+                <div class="tab-content" id="storyContent">
+                    <div class="input-group">
+                        <label for="storyImage">Story Image URL:</label>
+                        <input type="url" id="storyImage" name="storyImage">
+                    </div>
+                    <div class="input-group">
+                        <label for="storyPoints">Story Points (one per line):</label>
+                        <textarea id="storyPoints" name="storyPoints" required></textarea>
+                    </div>
+                </div>
             </div>
 
-            <div>
-              <label className="block font-bold mb-2">Location</label>
-              <input
-                type="text"
-                name="location"
-                value={formData.location}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-                required
-              />
+            <!-- Impact Tab -->
+            <div class="section">
+                <h2>Impact Tab</h2>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="impactImageEnabled" checked>
+                    <label for="impactImageEnabled">Include image in Impact tab</label>
+                </div>
+                <div class="tab-content" id="impactContent">
+                    <div class="input-group">
+                        <label for="impactImage">Impact Image URL:</label>
+                        <input type="url" id="impactImage" name="impactImage">
+                    </div>
+                    <div class="input-group">
+                        <label for="impactPoints">Impact Points (one per line):</label>
+                        <textarea id="impactPoints" name="impactPoints" required></textarea>
+                    </div>
+                </div>
             </div>
 
-            <div>
-              <label className="block font-bold mb-2">Campaign Image URL</label>
-              <input
-                type="url"
-                name="imageUrl"
-                value={formData.imageUrl}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-                required
-              />
+            <!-- About Tab -->
+            <div class="section">
+                <h2>About Tab</h2>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="aboutImageEnabled" checked>
+                    <label for="aboutImageEnabled">Include image in About tab</label>
+                </div>
+                <div class="tab-content" id="aboutContent">
+                    <div class="input-group">
+                        <label for="aboutImage">About Image URL:</label>
+                        <input type="url" id="aboutImage" name="aboutImage">
+                    </div>
+                    <div class="input-group">
+                        <label for="aboutPoints">About Points (one per line):</label>
+                        <textarea id="aboutPoints" name="aboutPoints" required></textarea>
+                    </div>
+                </div>
             </div>
 
-            <div>
-              <label className="block font-bold mb-2">Campaign Story</label>
-              <textarea
-                name="story"
-                value={formData.story}
-                onChange={handleChange}
-                className="w-full p-2 border rounded h-32"
-                required
-              />
+            <!-- Video Tab -->
+            <div class="section">
+                <h2>Video Tab (Optional)</h2>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="videoEnabled">
+                    <label for="videoEnabled">Include video tab</label>
+                </div>
+                <div class="tab-content" id="videoContent">
+                    <div class="input-group">
+                        <label for="videoUrl">YouTube Video URL:</label>
+                        <input type="url" id="videoUrl" name="videoUrl">
+                    </div>
+                </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block font-bold mb-2">Goal Amount ($)</label>
-                <input
-                  type="number"
-                  name="goal"
-                  value={formData.goal}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block font-bold mb-2">Raised Amount ($)</label>
-                <input
-                  type="number"
-                  name="raised"
-                  value={formData.raised}
-                  onChange={handleChange}
-                  className="w-full p-2 border rounded"
-                  required
-                />
-              </div>
+            <!-- Campaign Link -->
+            <div class="section">
+                <h2>Campaign Link</h2>
+                <div class="input-group">
+                    <label for="campaignUrl">Campaign URL:</label>
+                    <input type="url" id="campaignUrl" name="campaignUrl" required>
+                </div>
             </div>
 
-            <div>
-              <label className="block font-bold mb-2">Campaign URL</label>
-              <input
-                type="url"
-                name="campaignUrl"
-                value={formData.campaignUrl}
-                onChange={handleChange}
-                className="w-full p-2 border rounded"
-                required
-              />
+            <div class="button-group">
+                <button type="button" class="primary-button" onclick="generatePreview()">Generate Preview</button>
+                <button type="button" class="secondary-button" onclick="fillTestData()">Fill Test Data</button>
+                <button type="reset" class="secondary-button">Clear Form</button>
             </div>
-
-            <div className="flex gap-2">
-              <button
-                type="submit"
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-              >
-                Preview
-              </button>
-              <button
-                type="button"
-                onClick={fillTestData}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                Fill Test Data
-              </button>
-              <button
-                type="button"
-                onClick={clearForm}
-                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-              >
-                Clear
-              </button>
-            </div>
-          </div>
         </form>
 
-        {/* Preview Section */}
-        {showPreview && (
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <div className="relative">
-              <img 
-                src={formData.imageUrl} 
-                alt={formData.campaignTitle}
-                className="w-full h-48 object-cover"
-              />
-              <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-4 text-white">
-                <h2 className="text-xl font-bold">{formData.campaignTitle}</h2>
-                <p className="text-sm">
-                  {formData.organizer} • {formData.location}
-                </p>
-              </div>
-            </div>
-
-            <div className="p-4">
-              <div className="mb-4">
-                <div className="flex justify-between mb-2">
-                  <span className="font-bold">{formatCurrency(formData.raised)}</span>
-                  <span className="text-gray-600">raised of {formatCurrency(formData.goal)} goal</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-green-600 rounded-full h-2" 
-                    style={{ width: `${Math.min(calculateProgress(), 100)}%` }}
-                  ></div>
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <h3 className="font-bold mb-2">Campaign Story</h3>
-                <p className="text-gray-700">{formData.story}</p>
-              </div>
-
-              <a
-                href={formData.campaignUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block w-full bg-green-600 text-white text-center py-3 font-bold hover:bg-green-700 rounded"
-              >
-                Donate Now
-              </a>
-            </div>
-          </div>
-        )}
-      </div>
+        <div id="previewArea"></div>
     </div>
-  );
-};
 
-export default GoFundMeTeaserCreator;
+    <script>
+        function fillTestData() {
+            // Header information
+            document.getElementById('headerImage').value = 'https://i.ibb.co/N32GVgH/IMG-1693.jpg';
+            document.getElementById('campaignTitle').value = 'Support Local Farming';
+            document.getElementById('organizerName').value = 'Frank Johnson';
+            document.getElementById('location').value = 'Rural Queensland, Australia';
+
+            // Story tab
+            document.getElementById('storyImage').value = 'https://picsum.photos/seed/story/800/600';
+            document.getElementById('storyPoints').value = 'Supporting local farmers through tough times\nHelping maintain sustainable agriculture\nStrengthening our farming community';
+
+            // Impact tab
+            document.getElementById('impactImage').value = 'https://picsum.photos/seed/impact/800/600';
+            document.getElementById('impactPoints').value = 'Direct support to farming families\nMaintaining local food production\nPreserving agricultural heritage';
+
+            // About tab
+            document.getElementById('aboutImage').value = 'https://picsum.photos/seed/about/800/600';
+            document.getElementById('aboutPoints').value = 'Experienced farmer for 30 years\nActive community member\nDedicated to sustainable farming';
+
+            // Video tab
+            document.getElementById('videoUrl').value = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+
+            // Campaign URL
+            document.getElementById('campaignUrl').value = 'https://example.com/support-local-farming';
+
+            // Update logo preview
+            document.getElementById('logoPreview').src = document.getElementById('headerImage').value;
+        }
+
+        // Toggle image input visibility
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const contentId = this.id.replace('Enabled', 'Content');
+                const imageInput = document.querySelector(`#${contentId} input[type="url"]`);
+                if (imageInput) {
+                    imageInput.parentElement.style.display = this.checked ? 'block' : 'none';
+                }
+            });
+        });
+
+        function generatePreview() {
+            // Add preview generation code here
+            alert('Preview generation will be added in the next version');
+        }
+
+        // Initialize form
+        document.addEventListener('DOMContentLoaded', () => {
+            fillTestData(); // Automatically fill test data on load
+        });
+    </script>
+</body>
+</html>
