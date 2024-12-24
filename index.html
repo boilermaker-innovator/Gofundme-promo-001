@@ -3,441 +3,350 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campaign Teaser Builder</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+    <title>DOGE Information Teaser</title>
     <style>
-        /* Main Styles */
-        body {
-            font-family: -apple-system, system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+        :root {
+            --primary-color: #22c55e;
+            --secondary-color: #16a34a;
+            --background-color: #f8fafc;
+            --text-color: #334155;
+            --box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        * {
             margin: 0;
-            padding: 20px;
-            background: #f0f2f5;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
             line-height: 1.6;
+            padding: 2rem;
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
         }
 
-        /* Form Styles */
         .form-container {
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
         }
 
-        .section {
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
+        .preview-container {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
         }
 
-        h2 {
-            color: #1a73e8;
-            margin: 0 0 15px 0;
+        .form-section {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #f1f5f9;
+            border-radius: 0.5rem;
         }
 
-        .input-group {
-            margin-bottom: 15px;
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            font-weight: 600;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-color);
         }
 
-        input[type="text"],
-        input[type="url"],
-        textarea {
+        input, textarea {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            box-sizing: border-box;
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
         }
 
         textarea {
-            height: 100px;
+            min-height: 120px;
             resize: vertical;
-        }
-
-        .checkbox-group {
-            margin: 10px 0;
         }
 
         .button-group {
             display: flex;
-            gap: 10px;
+            gap: 1rem;
+            margin-top: 1.5rem;
         }
 
         button {
-            padding: 10px 20px;
+            padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 4px;
+            border-radius: 0.5rem;
+            font-weight: 600;
             cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
 
-        .primary-button {
-            background: #1a73e8;
+        .btn-primary {
+            background-color: var(--primary-color);
             color: white;
         }
 
-        .secondary-button {
-            background: #f8f9fa;
-            color: #1a73e8;
-            border: 1px solid #1a73e8;
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
         }
 
-        /* Preview Styles */
-        .preview-container {
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        .btn-secondary {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #dc2626;
+        }
+
+        .preview-content {
+            border: 2px solid var(--primary-color);
+            border-radius: 0.5rem;
             overflow: hidden;
         }
 
         .preview-header {
-            padding: 20px;
-            background: #1a73e8;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
             color: white;
-        }
-
-        .preview-content {
-            height: 500px;
-            position: relative;
-        }
-
-        /* Teaser Styles */
-        .teaser {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .teaser-header {
-            padding: 20px;
-            color: white;
-            transition: background-color 0.3s;
+            padding: 2rem;
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 2rem;
         }
 
-        .profile-image {
+        .preview-logo {
             width: 120px;
             height: 120px;
-            border-radius: 50%;
             object-fit: cover;
-            border: 3px solid rgba(255,255,255,0.8);
-        }
-
-        .header-info h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-
-        .header-info p {
-            margin: 5px 0;
-            opacity: 0.9;
+            border-radius: 1rem;
+            background: white;
+            padding: 0.5rem;
         }
 
         .tabs {
             display: flex;
-            background: white;
-            border-bottom: 1px solid #ddd;
+            background: #f8fafc;
+            padding: 0.5rem;
+            gap: 0.5rem;
         }
 
         .tab {
-            flex: 1;
-            padding: 12px;
+            padding: 0.75rem 1.5rem;
             border: none;
-            background: none;
+            border-radius: 0.5rem;
+            background: transparent;
             cursor: pointer;
             font-weight: 500;
-            color: #666;
-            transition: all 0.3s;
-            text-align: center;
+            color: var(--text-color);
+            transition: all 0.2s;
         }
 
         .tab.active {
-            color: #1a73e8;
-            border-bottom: 2px solid #1a73e8;
+            background: var(--primary-color);
+            color: white;
         }
 
         .tab-content {
             display: none;
-            padding: 20px;
-            height: calc(100% - 180px);
+            padding: 2rem;
         }
 
         .tab-content.active {
-            display: flex;
-            gap: 20px;
-        }
-
-        .content-image {
-            width: 50%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-
-        .content-text {
-            width: 50%;
-        }
-
-        .content-text ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .content-text li {
-            margin: 10px 0;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .content-text li:before {
-            content: "•";
-            position: absolute;
-            left: 0;
-            color: #1a73e8;
-        }
-
-        .teaser-footer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 20px;
-            border-top: 1px solid #ddd;
-            background: white;
-        }
-
-        .view-button {
             display: block;
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            background: #1a73e8;
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            text-align: center;
-            text-decoration: none;
         }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 0.5rem;
+        }
+
+
     </style>
 </head>
 <body>
-    <!-- Form Container -->
-    [Previous form HTML remains the same]
-
-    <!-- Preview Container -->
-    <div class="preview-container">
-        <div class="preview-header">
-            <h2>Live Preview</h2>
-            <p>Preview updates automatically as you type</p>
-        </div>
-        <div class="preview-content">
-            <div class="teaser">
-                <div class="teaser-header" id="teaserHeader">
-                    <img src="" alt="Profile" class="profile-image" id="previewImage">
-                    <div class="header-info">
-                        <h1 id="previewTitle"></h1>
-                        <p id="previewOrganizer"></p>
-                        <p id="previewLocation"></p>
-                    </div>
-                </div>
-                
-                <div class="tabs" id="teaserTabs"></div>
-                <div class="tab-contents" id="teaserContents"></div>
-                
-                <div class="teaser-footer">
-                    <a href="#" class="view-button" id="previewButton">View Full Campaign</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
     <div class="container">
-        <h1>Campaign Teaser Builder</h1>
-        
-        <form id="teaserForm">
-            <!-- Header Section -->
-            <div class="section">
-                <h2>Header Information</h2>
-                <img src="https://i.ibb.co/N32GVgH/IMG-1693.jpg" alt="Current Logo" class="current-logo" id="logoPreview">
-                <div class="input-group">
-                    <label for="headerImage">Profile Image URL:</label>
-                    <input type="url" id="headerImage" name="headerImage" required>
-                </div>
-                <div class="input-group">
-                    <label for="campaignTitle">Campaign Title:</label>
-                    <input type="text" id="campaignTitle" name="campaignTitle" required>
-                </div>
-                <div class="input-group">
-                    <label for="organizerName">Organizer Name:</label>
-                    <input type="text" id="organizerName" name="organizerName" required>
-                </div>
-                <div class="input-group">
-                    <label for="location">Location:</label>
-                    <input type="text" id="location" name="location" required>
-                </div>
-            </div>
-
-            <!-- Story Tab -->
-            <div class="section">
-                <h2>Story Tab</h2>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="storyImageEnabled" checked>
-                    <label for="storyImageEnabled">Include image in Story tab</label>
-                </div>
-                <div class="tab-content" id="storyContent">
-                    <div class="input-group">
-                        <label for="storyImage">Story Image URL:</label>
-                        <input type="url" id="storyImage" name="storyImage">
+        <div class="form-container">
+            <h2 class="section-title">Create DOGE Information Teaser</h2>
+            <form id="teaserForm" onsubmit="generateTeaser(event)">
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="logo">Header Image URL</label>
+                        <input type="url" id="logo" value="https://i.ibb.co/qFbY9wN/IMG-1828.jpg" required>
                     </div>
-                    <div class="input-group">
-                        <label for="storyPoints">Story Points (one per line):</label>
-                        <textarea id="storyPoints" name="storyPoints" required></textarea>
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" id="title" value="DOGE: Transforming Government Efficiency" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subtitle">Subtitle</label>
+                        <input type="text" id="subtitle" value="A Bold Initiative for Streamlined Government" required>
                     </div>
                 </div>
-            </div>
 
-            <!-- Impact Tab -->
-            <div class="section">
-                <h2>Impact Tab</h2>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="impactImageEnabled" checked>
-                    <label for="impactImageEnabled">Include image in Impact tab</label>
-                </div>
-                <div class="tab-content" id="impactContent">
-                    <div class="input-group">
-                        <label for="impactImage">Impact Image URL:</label>
-                        <input type="url" id="impactImage" name="impactImage">
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="overview">Overview Content</label>
+                        <textarea id="overview" required>DOGE Mission:
+• Cut federal spending by $2 trillion
+• Reduce agencies from 400+ to under 100
+• Streamline government operations
+• Complete by July 4, 2026</textarea>
                     </div>
-                    <div class="input-group">
-                        <label for="impactPoints">Impact Points (one per line):</label>
-                        <textarea id="impactPoints" name="impactPoints" required></textarea>
+                    <div class="form-group">
+                        <label for="features">Features Content</label>
+                        <textarea id="features" required>How DOGE Works:
+• Advisory commission structure
+• Congressional partnership
+• Public-private expertise
+• Data-driven decisions</textarea>
                     </div>
-                </div>
-            </div>
-
-            <!-- About Tab -->
-            <div class="section">
-                <h2>About Tab</h2>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="aboutImageEnabled" checked>
-                    <label for="aboutImageEnabled">Include image in About tab</label>
-                </div>
-                <div class="tab-content" id="aboutContent">
-                    <div class="input-group">
-                        <label for="aboutImage">About Image URL:</label>
-                        <input type="url" id="aboutImage" name="aboutImage">
-                    </div>
-                    <div class="input-group">
-                        <label for="aboutPoints">About Points (one per line):</label>
-                        <textarea id="aboutPoints" name="aboutPoints" required></textarea>
+                    <div class="form-group">
+                        <label for="benefits">Benefits Content</label>
+                        <textarea id="benefits" required>Expected Impact:
+• Major budget reduction
+• Streamlined operations
+• Enhanced efficiency
+• Better service delivery</textarea>
                     </div>
                 </div>
-            </div>
 
-            <!-- Video Tab -->
-            <div class="section">
-                <h2>Video Tab (Optional)</h2>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="videoEnabled">
-                    <label for="videoEnabled">Include video tab</label>
-                </div>
-                <div class="tab-content" id="videoContent">
-                    <div class="input-group">
-                        <label for="videoUrl">YouTube Video URL:</label>
-                        <input type="url" id="videoUrl" name="videoUrl">
+                <div class="form-section">
+                    <div class="form-group">
+                        <label for="videoUrl">YouTube Video URL</label>
+                        <input type="url" id="videoUrl" value="https://youtu.be/1H13mwmKq84?si=5aNY5Jwct1QJa0O5" required>
                     </div>
                 </div>
-            </div>
 
-            <!-- Campaign Link -->
-            <div class="section">
-                <h2>Campaign Link</h2>
-                <div class="input-group">
-                    <label for="campaignUrl">Campaign URL:</label>
-                    <input type="url" id="campaignUrl" name="campaignUrl" required>
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Update Preview</button>
+                    <button type="button" class="btn-secondary" onclick="clearForm()">Clear Form</button>
                 </div>
-            </div>
+            </form>
+        </div>
 
-            <div class="button-group">
-                <button type="button" class="primary-button" onclick="generatePreview()">Generate Preview</button>
-                <button type="button" class="secondary-button" onclick="fillTestData()">Fill Test Data</button>
-                <button type="reset" class="secondary-button">Clear Form</button>
-            </div>
-        </form>
-
-        <div id="previewArea"></div>
+        <div class="preview-container">
+            <h2 class="section-title">Live Preview</h2>
+            <div class="preview-content" id="previewContent"></div>
+        </div>
     </div>
 
     <script>
-        function fillTestData() {
-            // Header information
-            document.getElementById('headerImage').value = 'https://i.ibb.co/N32GVgH/IMG-1693.jpg';
-            document.getElementById('campaignTitle').value = 'Support Local Farming';
-            document.getElementById('organizerName').value = 'Frank Johnson';
-            document.getElementById('location').value = 'Rural Queensland, Australia';
-
-            // Story tab
-            document.getElementById('storyImage').value = 'https://picsum.photos/seed/story/800/600';
-            document.getElementById('storyPoints').value = 'Supporting local farmers through tough times\nHelping maintain sustainable agriculture\nStrengthening our farming community';
-
-            // Impact tab
-            document.getElementById('impactImage').value = 'https://picsum.photos/seed/impact/800/600';
-            document.getElementById('impactPoints').value = 'Direct support to farming families\nMaintaining local food production\nPreserving agricultural heritage';
-
-            // About tab
-            document.getElementById('aboutImage').value = 'https://picsum.photos/seed/about/800/600';
-            document.getElementById('aboutPoints').value = 'Experienced farmer for 30 years\nActive community member\nDedicated to sustainable farming';
-
-            // Video tab
-            document.getElementById('videoUrl').value = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-
-            // Campaign URL
-            document.getElementById('campaignUrl').value = 'https://example.com/support-local-farming';
-
-            // Update logo preview
-            document.getElementById('logoPreview').src = document.getElementById('headerImage').value;
+        function getYouTubeId(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
         }
 
-        // Toggle image input visibility
-        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                const contentId = this.id.replace('Enabled', 'Content');
-                const imageInput = document.querySelector(`#${contentId} input[type="url"]`);
-                if (imageInput) {
-                    imageInput.parentElement.style.display = this.checked ? 'block' : 'none';
-                }
-            });
-        });
+        function generateTeaser(event) {
+            event.preventDefault();
+            
+            const videoId = getYouTubeId(document.getElementById('videoUrl').value);
+            
+            const data = {
+                logo: document.getElementById('logo').value,
+                title: document.getElementById('title').value,
+                subtitle: document.getElementById('subtitle').value,
+                overview: document.getElementById('overview').value.replace(/\n/g, '<br>'),
+                features: document.getElementById('features').value.replace(/\n/g, '<br>'),
+                benefits: document.getElementById('benefits').value.replace(/\n/g, '<br>'),
+                videoId: videoId
+            };
 
-        function generatePreview() {
-            // Add preview generation code here
-            alert('Preview generation will be added in the next version');
+            const previewHtml = `
+                <div class="preview-header">
+                    <img src="${data.logo}" alt="DOGE Logo" class="preview-logo">
+                    <div>
+                        <h2>${data.title}</h2>
+                        <p>${data.subtitle}</p>
+                    </div>
+                </div>
+                
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab(0)">Overview</button>
+                    <button class="tab" onclick="switchTab(1)">Features</button>
+                    <button class="tab" onclick="switchTab(2)">Benefits</button>
+                    <button class="tab" onclick="switchTab(3)">Video</button>
+                </div>
+                
+                <div class="tab-content active">${data.overview}</div>
+                <div class="tab-content">${data.features}</div>
+                <div class="tab-content">${data.benefits}</div>
+                <div class="tab-content">
+                    <div class="video-container">
+                        <iframe 
+                            src="https://www.youtube.com/embed/${videoId}"
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+
+            `;
+
+            document.getElementById('previewContent').innerHTML = previewHtml;
         }
 
-        // Initialize form
-        document.addEventListener('DOMContentLoaded', () => {
-            fillTestData(); // Automatically fill test data on load
+        function switchTab(index) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            tabs[index].classList.add('active');
+            contents[index].classList.add('active');
+        }
+
+        function clearForm() {
+            if (confirm("Are you sure you want to clear all content?")) {
+                document.getElementById('teaserForm').reset();
+                document.getElementById('previewContent').innerHTML = '';
+            }
+        }
+
+        // Generate initial preview on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            generateTeaser(new Event('submit'));
         });
     </script>
 </body>
