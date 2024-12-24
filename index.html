@@ -339,8 +339,43 @@
 
         function clearForm() {
             if (confirm("Are you sure you want to clear all content?")) {
-                document.getElementById('teaserForm').reset();
-                document.getElementById('previewContent').innerHTML = '';
+                // Clear all input fields
+                document.getElementById('logo').value = '';
+                document.getElementById('title').value = '';
+                document.getElementById('subtitle').value = '';
+                document.getElementById('overview').value = '';
+                document.getElementById('features').value = '';
+                document.getElementById('benefits').value = '';
+                document.getElementById('videoUrl').value = '';
+                
+                // Generate empty preview
+                const emptyPreview = `
+                    <div class="preview-header">
+                        <img src="" alt="Logo" class="preview-logo">
+                        <div>
+                            <h2></h2>
+                            <p></p>
+                        </div>
+                    </div>
+                    
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchTab(0)">Overview</button>
+                        <button class="tab" onclick="switchTab(1)">Features</button>
+                        <button class="tab" onclick="switchTab(2)">Benefits</button>
+                        <button class="tab" onclick="switchTab(3)">Video</button>
+                    </div>
+                    
+                    <div class="tab-content active"></div>
+                    <div class="tab-content"></div>
+                    <div class="tab-content"></div>
+                    <div class="tab-content">
+                        <div class="video-container">
+                            <p>No video URL provided</p>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('previewContent').innerHTML = emptyPreview;
             }
         }
 
