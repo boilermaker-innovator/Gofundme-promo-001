@@ -1133,10 +1133,40 @@ Return ONLY valid JSON:
                     // Remove markdown code blocks if present
                     text = text.replace(/```json\s*/gi, '').replace(/```\s*/gi, '');
                     
+                    // Try to extract JSON
                     const match = text.match(/\{[\s\S]*\}/);
                     
                     if (match) {
-                        const content = JSON.parse(match[0]);
+                        let jsonStr = match[0];
+                        
+                        // Clean up common JSON issues from AI
+                        // Fix unescaped quotes inside strings
+                        // Replace smart quotes with regular quotes
+                        jsonStr = jsonStr.replace(/[\u201C\u201D]/g, '"');
+                        jsonStr = jsonStr.replace(/[\u2018\u2019]/g, "'");
+                        
+                        let content;
+                        try {
+                            content = JSON.parse(jsonStr);
+                        } catch (parseError) {
+                            console.error('JSON parse error:', parseError);
+                            console.log('Problematic JSON:', jsonStr);
+                            
+                            // Try a more aggressive cleanup - extract values manually
+                            const section1Match = text.match(/"section1"\s*:\s*"([^"]*(?:\\.[^"]*)*)"/);
+                            const section2Match = text.match(/"section2"\s*:\s*"([^"]*(?:\\.[^"]*)*)"/);
+                            const section3Match = text.match(/"section3"\s*:\s*"([^"]*(?:\\.[^"]*)*)"/);
+                            const section4Match = text.match(/"section4"\s*:\s*"([^"]*(?:\\.[^"]*)*)"/);
+                            
+                            content = {
+                                section1: section1Match ? section1Match[1] : '',
+                                section2: section2Match ? section2Match[1] : '',
+                                section3: section3Match ? section3Match[1] : '',
+                                section4: section4Match ? section4Match[1] : ''
+                            };
+                            console.log('Extracted manually:', content);
+                        }
+                        
                         console.log('Parsed content:', content);
                         
                         // Try different possible key names
@@ -1161,10 +1191,10 @@ Return ONLY valid JSON:
                         if (s1 || s2 || s3 || s4) {
                             showSuccess('✨ Story organized! Edit as needed.');
                         } else {
-                            showError('AI returned empty sections. Check console for details. Keys found: ' + Object.keys(content).join(', '));
+                            showError('AI returned empty sections. Check console (F12) for details.');
                         }
                     } else {
-                        throw new Error('Could not parse AI response - no JSON found');
+                        throw new Error('Could not find JSON in AI response');
                     }
                 } else {
                     console.error('Unexpected response structure:', data);
