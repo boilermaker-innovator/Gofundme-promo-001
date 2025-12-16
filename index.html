@@ -1089,22 +1089,20 @@ Or just describe your situation:
             showLoading('AI is organizing your story...');
             
             try {
-                const prompt = `You are helping organize a GoFundMe campaign story into 4 clear sections.
+                const prompt = `Organize this GoFundMe story into 4 sections.
 
-Here is the campaign story (use ONLY facts from this - don't invent anything):
----
+STORY:
 ${storyText.substring(0, 5000)}
----
 
-Reorganize into these 4 sections. Keep the person's voice and emotion. Be specific and compelling.
-
-Return ONLY valid JSON:
+Return ONLY this JSON format with the actual story content as values (not the labels):
 {
-    "section1": "THE CRISIS - What happened? (2-3 sentences, specific details)",
-    "section2": "WHY WE NEED HELP - What's at stake? What happens without help? (2-3 sentences)",
-    "section3": "WHERE MONEY GOES - Specific breakdown of costs (2-3 sentences with dollar amounts if mentioned)",
-    "section4": "WHY TRUST THIS - Who is organizing? How can people verify? Updates? (2-3 sentences)"
-}`;
+    "section1": "Put the crisis/what happened here",
+    "section2": "Put why help is needed here", 
+    "section3": "Put where money goes here",
+    "section4": "Put trust/verification info here"
+}
+
+Use ONLY facts from the story. Keep each section 2-3 sentences. Return ONLY the JSON, no other text.`;
 
                 console.log('Calling Gemini API...');
                 
@@ -1153,16 +1151,24 @@ Return ONLY valid JSON:
                             console.log('Problematic JSON:', jsonStr);
                             
                             // Try a more aggressive cleanup - extract values manually
-                            const section1Match = text.match(/"section1"\s*:\s*"([^"]*(?:\\.[^"]*)*)"/);
-                            const section2Match = text.match(/"section2"\s*:\s*"([^"]*(?:\\.[^"]*)*)"/);
-                            const section3Match = text.match(/"section3"\s*:\s*"([^"]*(?:\\.[^"]*)*)"/);
-                            const section4Match = text.match(/"section4"\s*:\s*"([^"]*(?:\\.[^"]*)*)"/);
+                            // Handle case where AI puts label: value format
+                            const extractValue = (key) => {
+                                // First try: normal format "section1": "value"
+                                const normalMatch = text.match(new RegExp(`"${key}"\\s*:\\s*"([^"]+)"`));
+                                if (normalMatch) return normalMatch[1];
+                                
+                                // Second try: malformed "section1": "LABEL": "value" - get the last quoted string
+                                const malformedMatch = text.match(new RegExp(`"${key}"[^}]*?:\\s*"([^"]{20,})"`));
+                                if (malformedMatch) return malformedMatch[1];
+                                
+                                return '';
+                            };
                             
                             content = {
-                                section1: section1Match ? section1Match[1] : '',
-                                section2: section2Match ? section2Match[1] : '',
-                                section3: section3Match ? section3Match[1] : '',
-                                section4: section4Match ? section4Match[1] : ''
+                                section1: extractValue('section1'),
+                                section2: extractValue('section2'),
+                                section3: extractValue('section3'),
+                                section4: extractValue('section4')
                             };
                             console.log('Extracted manually:', content);
                         }
